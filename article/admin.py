@@ -7,7 +7,6 @@ class ArticleAdmin(admin.ModelAdmin):
     # 表头
     list_display = ("title","author","abstract","visited")
     # 搜索
-    search_fields = ("")
-    list_filter = ("")
+
 
 admin.site.register(Article,ArticleAdmin)
