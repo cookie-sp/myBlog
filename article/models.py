@@ -17,5 +17,6 @@ class Article(models.Model):
         verbose_name_plural = verbose_name
         # 排序 如果要按倒序排，在前面加-号
         ordering = ('-created_at',)
+        
     def __str__(self):
         return self.title

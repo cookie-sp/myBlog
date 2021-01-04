@@ -1,0 +1,55 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<div class="col-md-8">
+	<h1>最新发布</h1>
+	<!-- 标题，标签，分类，留言总数，发布时间 -->
+	<article>
+		<h2><a href="#">{{ article.title }}</a></h2>
+		<div class="row">
+			<div class="col-md-6 col-sm-6">
+				<span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;<a href="">标签</a>
+				&nbsp;&nbsp;<span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;<a href="">分类1</a>，<a
+					href="">分类2</a>，<a href="">分类3</a>
+			</div>
+			<div class="col-md-6 col-sm-6">
+				<span class="glyphicon glyphicon-comment"></span>&nbsp;&nbsp;<a href="">200条评论</a>
+				&nbsp;&nbsp;<span class="glyphicon glyphicon-time"></span>&nbsp;&nbsp;<a href="">{{ article.created_at }}</a>
+			</div>
+		</div>
+		<hr>
+
+		<img src="http://placekitten.com/900/300" class="img-responsive">
+		<br />
+		<p class="lead">{{ article.abstract }}</p>
+		<p>
+			{{ article.content }}
+		</p>
+		<ul class="pager">
+			<li class="previous"><a href="index.html"> 返回主页</a></li>
+		</ul>
+		<div class="well">
+			<h4>评论区</h4>
+			<form class="clearfix">
+				<div class="form-group col-md-6">
+					<label for="username">用户名字</label>
+					<input type="text" class="form-control" id="username" placeholder="名字">
+				</div>
+				<div class="form-group col-md-6">
+					<label for="exampleInputEmail1">邮箱</label>
+					<input type="email" class="form-control" id="exampleInputEmail1" placeholder="邮箱">
+				</div>
+				<div class="form-group col-md-12">
+					<textarea class="form-control" id="comment" placeholder="评论内容..."></textarea>
+				</div>
+				<div class="form-group text-right">
+					<button type="submit" class="btn btn-primary">提交</button>
+				</div>
+			</form>
+		</div>
+
+		<hr>
+	</article>
+</div>
+{% include 'common/aside.html' %}
+{% endblock %}

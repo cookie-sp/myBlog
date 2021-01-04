@@ -1,0 +1,29 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<h1>联系我</h1>
+<div class="well">
+	有问题联系我呀
+</div>
+<form>
+	<div class="form-group">
+		<label for="username">用户名字</label>
+		<input type="text" class="form-control" id="username" placeholder="名字">
+	</div>
+	<div class="form-group">
+		<label for="exampleInputEmail1"> 邮箱</label>
+		<input type="email" class="form-control" id="exampleInputEmail1" placeholder="邮箱">
+	</div>
+	<div class="form-group">
+		<label for="subject">主题</label>
+		<input type="text" class="form-control" id="subject" placeholder="主题">
+	</div>
+	<div class="form-group">
+		<label for="message">消息内容</label>
+		<textarea class="form-control" id="message" placeholder="评论内容..."></textarea>
+	</div>
+	<div class="form-group text-right">
+		<button type="submit" class="btn btn-primary btn-lg">提交你的消息</button>
+	</div>
+</form>
+{% endblock %}
