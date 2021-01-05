@@ -13,11 +13,9 @@
         </div>
         <!-- List group -->
         <ul class="list-group">
-            <li class="list-group-item"><a href="">1. 最新文章8月27日</a></li>
-            <li class="list-group-item"><a href="">2. 最新文章8月26日</a></li>
-            <li class="list-group-item"><a href="">3. 最新文章8月25日</a></li>
-            <li class="list-group-item"><a href="">4. 最新文章8月24日</a></li>
-            <li class="list-group-item"><a href="">5. 最新文章8月23日</a></li>
+            {% for article in lastest_articles %}
+            <li class="list-group-item"><a href=" {{ article.get_absolute_url }}"> {{article.title}} </a></li>
+            {% endfor %}
         </ul>
     </div>
 
@@ -29,11 +27,9 @@
         </div>
         <!-- List group -->
         <ul class="list-group">
-            <li class="list-group-item"><a href="">水果</a></li>
-            <li class="list-group-item"><a href="">蔬菜</a></li>
-            <li class="list-group-item"><a href="">电脑3C</a></li>
-            <li class="list-group-item"><a href="">明星八卦</a></li>
-            <li class="list-group-item"><a href="">政治事件</a></li>
+            {% for category in categories %}
+            <li class="list-group-item"><a href=""> {{ category.name }} </a></li>
+            {% endfor %}
         </ul>
     </div>
 
@@ -46,12 +42,11 @@
         <!-- List group -->
         <div class="panel-body">
             <ul class="list-inline">
-                <li><a href="">子鼠</a></li>
-                <li><a href="">丑牛</a></li>
-                <li><a href="">寅虎</a></li>
-                <li><a href="">卯兔</a></li>
-                <li><a href="">申龙</a></li>
-                <li><a href="">巳蛇</a></li>
+                {% for tag in tags %}
+                <li>
+                    <a href=""class="label {% cycle 'label-default' 'label-primary' 'label-success' 'label-info' 'label-warning' 'label-danger' %}>{{ tag.name }}</a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>

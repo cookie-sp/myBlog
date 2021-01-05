@@ -120,4 +120,170 @@ urlpatterns = [
 {{ article.content | truncatechars:200 }}  # truncatechars:限制可以显示的字数，也可以直接在models定义模型时定义
 {% endfor %}
 ````
+## 六.将所有app归拢到apps文件夹下
+```python
+import sys
+sys.path.insert(0,os.path.join(BASE_RIR,'apps'))
+```
 
+1. 将标签名和分类通过{{}}渲染进去页面
+
+   ```python
+   # 四步走（先注册模型，再用views中具体方法，最后两步渲染页面）
+   1. 定义这两个字段
+   	category = models.ManyToManyField(Category,verbose_name="文章分类")
+       tag = models.ManyToManyField(Tag,verbose_name="文章标签")
+   2. 在views中，在方法中写入
+   def index(request):
+       articles = Article.objects.all()
+       limited = 2
+       p = Paginator(articles,limited)
+       # 得到前端传过来的page参数
+       try:
+           page = request.GET.get('page',1)
+       except PageNotFound:
+           page = 1
+   
+       articles = p.get_page(page)
+       # 获取到最新的5篇文章
+       lastest_articles = articles[:5]
+       # 获取所有的分类
+       categories = Category.objects.all()
+       # 获取所有的标签
+       tags = Tag.objects.all()
+       context = {
+           "articles":articles,
+           "lastest_articles":lastest_articles,
+           "categories":categories,
+           "tags":tags
+       }
+       return render(request,'index.html',context)
+   
+   
+   def detail(request,pk):
+       article = Article.objects.get(pk=pk)
+       article.increase_visited()
+       print(article.get_absolute_url())
+       # 获取到最新的5篇文章
+       lastest_articles = Article.objects.all()[:5]
+       # 获取所有的分类
+       categories = Category.objects.all()
+       # 获取所有的标签
+       tags = Tag.objects.all()
+       context = {
+           "article":article,
+           "lastest_articles":lastest_articles,
+           "categories":categories,
+           "tags":tags
+       }
+       return render(request,'single_article.html',context)
+   
+   先循环  例如{% for category in article.category.all %}    {% endfor %}
+   将所有的category页面中
+   再在具体位置 对具体内容渲染 {{ category }}
+   ```
+
+   2. 文章访问量的写法
+
+   ```python
+   models.py
+   # 增加访问量
+       def increase_visited(self):
+           self.visited += 1
+           self.save(update_fields = ['visited'])
+   # 在前端页面中渲染
+   <span class="glyphicon glyphicon-eye-open"> {{ article.visited }} </span>
+   ```
+
+   3. 分页
+
+   ````python
+   def index(request):
+       articles = Article.objects.all()
+       # 一页限制两篇内容
+       # 传入文章和限制数
+       limited = 2
+       p = Paginator(articles,limited)
+       # 得到前端传过来的page参数
+       try:
+           page = request.GET.get('page',1)
+       except PageNotFound:
+           page = 1
+   
+       articles = p.get_page(page)
+       # 获取到最新的5篇文章
+       lastest_articles = articles[:5]
+       # 获取所有的分类
+       categories = Category.objects.all()
+       # 获取所有的标签
+       tags = Tag.objects.all()
+       context = {
+           "articles":articles,
+           "lastest_articles":lastest_articles,
+           "categories":categories,
+           "tags":tags
+       }
+       return render(request,'index.html',context)
+   # 在前端页面上写分页
+   <ul class="pager">
+   		{%  if articles.has_previous %}
+   		<li class="previous">
+   			<a href="?page={{ articles.previous_page_number }}"><span aria-hidden="true">&larr;</span> 上一页</a>
+   		</li>
+   		{% endif %}
+   		{% if articles.has_next %}
+   		<li class="next">
+   			<a href="?page={{ articles.next_page_number }}">下一页 <span aria-hidden="true">&rarr;</span></a>
+   		</li>
+   		{% endif %}
+   	</ul>
+   ````
+
+   4. 反向解析获得每篇文章的绝对路径
+
+   ````python
+   # models.py中的代码
+   
+   # 反向解析，得到每篇文章的绝对路径 http://127.0.0.1:8000/article/detail/2
+   def get_absolute_url(self):
+      return reverse('detail',args=[str(self.pk)])
+   # 将解析后的具体路径渲染到前端页面，实现页面跳转
+   h2><a href=" {{ article.get_absolute_url }} ">{{ article.title }}</a></h2>
+   ````
+
+   5. 搜索功能
+
+   ````python
+   # views.py
+   # 定义搜索方法
+   def search(request):
+       keyword = request.GET.get("keyword")
+       print(keyword)
+       if not keyword:
+           error_msg = "请输入关键字"
+           return render(request,'index.html',locals())
+       articles = Article.objects.filter(Q(title__icontains = keyword)|Q(abstract__icontains = keyword)|Q(content__icontains=keyword))
+       limited = 2
+       p = Paginator(articles,limited)
+       # 得到前端传过来的page参数
+       try:
+           page = request.GET.get('page',1)
+       except PageNotFound:
+           page = 1
+   
+       articles = p.get_page(page)
+       # 获取最新的5篇文章
+       lastest_articles = articles()[:5]
+       # 获取所有的分类
+       categories = Category.objects.all()
+       # 获取所有的标签
+       tags = Tag.objects.all()
+      
+       return render(request,'index.html',locals())
+   ````
+
+   
+
+### 七.评论和集成markdownfy插件
+
+> django-contrib-comments django-markdownfy
